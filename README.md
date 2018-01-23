@@ -42,3 +42,21 @@ These two graphs hint at the fact that the biggest factor in determining the dif
 
 ![Ascent by length and difficulty](images/Ascent_by_length_difficulty.png)
 ![Descent by length and difficulty](images/Descent_by_length_difficulty.png)
+
+This heatmap shows that the most strongly correlated quantitative columns of my data are length and ascent/descent.  This makes sense because as a trail gets longer, it increases in ascent/descent, unless it is a flat jeep road.
+
+![Heatmap of quantitative columns](images/Heatmap_quantitative_columns.png)
+
+
+## Methods
+
+# Content Based Recommender
+
+As I mentioned in motivation, the question that most riders want to know about an unknown trail is, "What trails that I've ridden can I compare it to?"; therefore I knew that I wanted to build a recommender that would take a trail known to a rider and return all the trails in the country ordered by their similarity to the known trail.  The rider would then have the option of filtering the set of trails by state and city/town depending on where they would like to ride.  The columns I chose to compare for similarity are ['ascent','descent','difficulty_encoded','length','stars',
+'type_Featured Ride','type_Trail'] as these are the traits that most define a rider's experience and preference for a trail.  Since these features have different ranges in their values, I first scaled the data so that the magnitude of certain features would not have too much influence on a measurement of similarity.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.  
+
+Considering each trail and it's features as a vector, I wanted to be able to measure the similarity of any one vector to all the other vectors.  Cosine Similarity and Euclidean Distance are two popular methods to measure vector similarity; I chose Cosine Similarity to measure the similarity between my vectors because it measures the angle between the vectors; in other words, it measures the direction of vectors, instead of the magnitude of the features.  For example, two trails that have ascent and descents of (491, -503) and (691, -703) would have a high cosine similarity value because the angle between those two points is small, though they would have a low euclidean distance because the magnitude of those values are different.  
+
+# Cold Start Recommender Based on Location
+
+## Results
