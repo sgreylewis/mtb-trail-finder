@@ -9,7 +9,7 @@ you’re always looking for the next trail to shred.  It’s easiest to get reco
 
 I wrote python code that made enough requests to [MTB Project's API](https://www.mtbproject.com//data) to get
 data on 26,752 trails in all 50 states and the nation's capital.  The API data came
-in JSON files, which were very easy to access and concat.  The raw features were:
+in JSON files, which were very easy to access, put into pandas dataframes, and concat.  The raw features were:
 ['ascent', 'conditionDate', 'conditionDetails', 'conditionStatus', 'descent', 'difficulty','high', 'id', 'imgMedium', 'imgSmall', 'imgSmallMed', 'imgSqSmall', 'latitude', 'length', 'location', 'longitude', 'low', 'name', 'starVotes', 'stars', 'summary', 'type', 'url'].  
 
 ## Feature Engineering
@@ -17,3 +17,4 @@ in JSON files, which were very easy to access and concat.  The raw features were
 Since I want to build a content-recommender that will compare trails on their features, I dropped ['conditionDate', 'conditionDetails', 'conditionStatus','high', 'id', 'imgMedium', 'imgSmall', 'imgSmallMed', 'imgSqSmall', 'low', 'starVotes'] since I didn't believe those features, even the images, are the best indicators of what makes trails similar.  I didn't end up using all the remaining features, such as 'latitude', 'longitude', 'summary', and 'url', to make my comparisons but I kept them as I would need them in my website; I also created a few new columns for 'city/town' and 'state' so that I could later search the trails by state and/or location.  I found 5,804 trails were of the type 'Connector', which is a trail that is most likely less than 1 mile long and intended as a bypass or connection between trails or trail systems; therefore I didn't think it desirable to recommend them as trails to ride on.  I also dropped the 37 trails that had missing difficulty ratings, as this would be an attribute I would use for comparison of trails.  Knowing that riders would prefer to see a set of trails with a specific range of distances, I created a length_range column that categorized each trail within a certain distance range.  In order to make the comparisons, I needed to quantify all features that I planned to use so I encoded 'difficulty', and created dummy variable columns for 'type'.  Lastly, I cleaned up columns with string values to make them more presentable for visualizations and the website.  
 
 ## Exploratory Data Analysis through Visualizations and Maps
+![Basemap Map](/Notebooks/Trails_on_USmap.png)
