@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+
+body{
+  background-image:url('static/images/sarah_horsethief.jpg');
+  width:100%;
+ background-size: cover;
+}
+
+   /*body{
+     background-image:url('http://www.luganoturismo.ch/ImageGen.ashx?width=768&image=/media/871094/01-73.jpg');
+     width:100%;
+    background-size: cover;
+   }*/
+
+
+
+   @media only screen and (max-width: 600px) {
+       body {
+           background-size: auto;
+       }
+   }
+
+
+
+.main {
+  background-color: rgba(255, 255, 255, 0.5);
+  margin-top: 100px;
+  padding-bottom: 50px;
+}
+.main h1 {
+  font-size: 5em;
+}
+.main h2 {
+  font-size:3em;
+}
+.main p {
+  font-size:2em;
+}
+.buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+
+
+
+
+button {
+            padding: 1vh 2vw;
+            background-color: cornflowerblue;
+            color: white;
+            border-radius: 16px;
+            border-color: white;
+            padding-left: 12px;
+            padding-right: 12px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: rgba(0,0,0,0);
+            color: cornflowerblue;
+            border-color: cornflowerblue;
+
+        }
+
+
+</style>
+
+
+
+
+
+<div class="overlay">
+
+</div>
+
+
+
+
+
+
+
+
+
+    <div class="main">
+
+      <div class="starter-template">
+        <h1>Looking for a new trail to shred?</h1>
+        <h2>Get recommendations based on where you've been and where you're going.</h2>
+      </div>
+
+      <div class='buttons'>
+      <form action='/trails', method='POST'>
+        <button type="submit" >Recommendations Based on Trails You Like</button>
+      </form>
+
+      <form action='/location', method='POST'>
+        <button type="submit" >Recommendations Based on Your Location</button>
+      </form>
+
+    </div>
+
+
+    </div>
+
+
+{% endblock %}

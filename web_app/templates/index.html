@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.main {
+  background-color: rgba(255, 255, 255, 0.7);
+  margin-top: 50px;
+}
+.move-button {
+  display: flex;
+  justify-content: center;
+}
+/*body {
+  background-image: url('http://bike-oisans.com/wp-content/modules/module_sliders/contenu/images/1_34.jpg');
+  background-size: 100%
+}*/
+
+body {
+  background-image: url('static/images/sarah_joes_ridge.jpg');
+  background-size: 100%
+}
+
+@media only screen and (max-width: 600px) {
+    body {
+        background-size: auto;
+    }
+}
+
+button {
+            padding: 1vh 2vw;
+            background-color: cornflowerblue;
+            color: white;
+            border-radius: 16px;
+            border-color:white;
+            padding-left: 12px;
+            padding-right: 12px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: rgba(0,0,0,0);
+            color: cornflowerblue;
+            border-color: cornflowerblue;
+            border: 2px solid cornflowerblue;
+        }
+</style>
+
+
+<div class="main" style="padding: 20px 25% 20px 25%;">
+
+  <h3><b>Get recommendations of trails to shred based on a trail you know you like:</b></h3>
+
+<br>
+
+<form action='/recommendations', method='POST'>
+
+<div><h4><b>Step 1: Choose a state you have ridden in.</b></h4></div>
+<!-- I want to change this to state instead of resort -->
+<select name="state" id="select_state" class="selectpicker form-control">
+    <option selected="selected" value = ''>Select a state with a trail you like...</option>
+    {% for state in df['state'].unique()|sort %}
+    <option value="{{ state }}">{{ state }}</option>
+    {% endfor %}
+</select>
+
+<br><br>
+
+
+<div><h4><b>Step 2: Choose a city/town that you have ridden in that state.</b>
+
+</h4> </div>
+
+<select name="city_town" id="select_city_town" class="selectpicker form-control" disabled>
+    <option selected="selected" value = ''>Select a location...</option>
+</select>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script charset="utf-8" type="text/javascript">
+    $(function() {
+        var dropdown = {
+            state: $('#select_state'),
+            city_town: $('#select_city_town')
+        };
+
+        // function to call XHR and update goodsrec dropdown
+        function update_city_town() {
+            var state = dropdown.state.val();
+            dropdown.city_town.attr('disabled', 'disabled');
+            console.log(state);
+
+            if (state.length) {
+                dropdown.city_town.empty();
+                //$.getJSON("{{ url_for('get_trail_names') }}", {state: state}, function(data) {
+                $.getJSON("/get_city_towns", {state: state}, function(data) {
+                    console.log(data);
+      //might not need the console.log, for each item in data, value is the index and text is the name of the location
+                    data.forEach(function(item) {
+                        dropdown.city_town.append(
+                            $('<option>', {
+                                value: item.city_town,
+                                text: item.city_town
+                            })
+                        );
+                    });
+                    dropdown.city_town.removeAttr('disabled'); //this means that you can't click on it until it's been populated
+                });
+            }
+        }
+
+        dropdown.state.on('change', function() {
+            update_city_town();
+        });
+
+    });
+</script>
+
+<br><br>
+
+
+<div><h4><b>Step 3: Choose a trail that you have ridden in that location.</b>
+
+</h4> </div>
+
+<select name="trail" id="select_trail" class="selectpicker form-control" disabled>
+    <option selected="selected" value = ''>Select a trail...</option>
+</select>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script charset="utf-8" type="text/javascript">
+    $(function() {
+        var dropdown = {
+            state: $('#select_state'),
+            city_town: $('#select_city_town'),
+            trail: $('#select_trail')
+        };
+
+        // function to call XHR and update goodsrec dropdown
+        function updateTrail() {
+            var state = dropdown.state.val();
+            var city_town = dropdown.city_town.val();
+            dropdown.trail.attr('disabled', 'disabled');
+            console.log(state);
+            console.log(city_town);
+
+            if (city_town.length) {
+                dropdown.trail.empty();
+                //$.getJSON("{{ url_for('get_trail_names') }}", {state: state}, function(data) {
+                $.getJSON("/get_trails", {state: state, city_town: city_town}, function(trail_data) {
+                    console.log(trail_data);
+      //might not need the console.log, for each item in trail_data, value is the index and text is the name of the trail
+                    trail_data.forEach(function(item) {
+                        dropdown.trail.append(
+                            $('<option>', {
+                                value: item.id,
+                                text: item.name
+                            })
+                        );
+                    });
+                    dropdown.trail.removeAttr('disabled'); //this means that you can't click on it until it's been populated
+                });
+            }
+        }
+
+        dropdown.city_town.on('change', function() {
+            updateTrail();
+        });
+
+    });
+</script>
+
+<br>
+<br>
+
+<div><h4><b>Step 4 (Optional): Choose the state you are planning on riding in.</b></h4></div>
+
+<select name="dest_state" id="select_state_dest" class="selectpicker form-control">
+    <option selected="selected" value = ''>Where are you riding today?</option>
+    <option value=''>Anywhere</option>
+    {% for dest_state in df['state'].unique()|sort %}
+    <option value="{{ dest_state }}">{{ dest_state }}</option>
+    {% endfor %}
+</select>
+
+<br>
+<br>
+
+<div><h4><b>Step 5 (Optional): Choose a location that you'd like to ride in that state.</b>
+
+</h4> </div>
+
+<select name="dest_city_town" id="select_dest_city_town" class="selectpicker form-control" disabled>
+    <option selected="selected" value = ''>Select a location from the state you've like to ride in...</option>
+      <option value=''>Anywhere</option>
+</select>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script charset="utf-8" type="text/javascript">
+    $(function() {
+        var dropdown = {
+            state: $('#select_state_dest'),
+            city_town: $('#select_dest_city_town')
+        };
+
+        function update_city_town() {
+            var state = dropdown.state.val();
+            dropdown.city_town.attr('disabled', 'disabled');
+            console.log(state);
+
+            if (state.length) {
+                dropdown.city_town.empty();
+                //$.getJSON("{{ url_for('get_trail_names') }}", {state: state}, function(data) {
+                $.getJSON("/get_city_towns", {state: state}, function(data) {
+                    console.log(data);
+
+                    data.forEach(function(item) {
+                        dropdown.city_town.append(
+                            $('<option>', {
+
+                                value: item.city_town,
+                                text: item.city_town
+                            })
+                        );
+                    });
+                    dropdown.city_town.removeAttr('disabled'); //this means that you can't click on it until it's been populated
+                });
+            }
+        }
+
+        dropdown.state.on('change', function() {
+            update_city_town();
+        });
+
+    });
+</script>
+
+<br><br>
+<!--
+<div><h4><b>Step 6 (Optional): Choose how many recommendations you want.</b></h4></div>
+
+<select name="num_recs" id="select_num_recs" class="selectpicker form-control">
+    <option selected="" value=5>How many recommendations would you like?</option>
+    {% for i in range(1,21) %}
+    <option value="{{ i }}">{{ i }}</option>
+    {% endfor %}
+</select>
+<br>
+<br>
+<br>
+-->
+
+
+  <div class='move-button'>
+
+  <button type="submit">Recommend</button>
+
+</div>
+</div>
+
+</form>
+</form>
+
+<br><br>
+
+
+
+<br>
+<br>
+
+{% endblock %}

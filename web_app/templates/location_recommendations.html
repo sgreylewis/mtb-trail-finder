@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- this gives the classes; I could make more for green/blue -->
+<style>
+tr:nth-child(even) {background: #CCC}
+tr:nth-child(odd) {background: #FFF}
+
+.table {
+text-align: center;
+display: flex;
+justify-content: center;
+}
+@media only screen and (max-width: 1000px) {
+    .table {
+        text-align: center;
+        display: flex;
+        justify-content: flex-start;
+    }
+}
+
+.move-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 7px;
+}
+button {
+            padding: 1vh 2vw;
+            background-color: cornflowerblue;
+            color: white;
+            border-radius: 16px;
+            border-color: white;
+            padding-left: 12px;
+            padding-right: 12px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: rgba(0,0,0,0);
+            color: cornflowerblue;
+            border-color: cornflowerblue;
+            border: 2px solid cornflowerblue;
+        }
+
+.disclaimer {
+  text-align: center;
+}
+
+.title {
+  text-align: center;
+}
+
+
+</style>
+ <!-- This creates the small table with your original -->
+<br>
+
+ <!-- this creates the table with your recommendations -->
+<h2 class='title'>Trails Within Your Radius</h2>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<table class='table'>
+  <tr>
+  <th>#</th>
+  {% for col in rec_df.columns %}
+  <th>{{col}}</th>
+  {% endfor %}
+  </tr>
+  {% for i, row in rec_df.iloc[0:].iterrows() %}
+  <!-- <tr class="{{row.difficulty.lower().replace(' ','')}}"> -->
+  <!-- <tr class="{{row.difficulty.lower().replace(' ','')}}"> -->
+    <td>{{i}}</td>
+    {% for entry in row %}
+    <td>{{ entry }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+
+<div class='disclaimer'>
+<i>Disclaimer: The distance away is as the crow flies; therefore you will most likely be traveling longer than that distance, but not by far!</i>
+</div>
+<br>
+
+<form action="/location" >
+  <div class='move-button'>
+  <button type="submit">Cast another net!</button>
+    </form>
+
+<br>
+
+{% endblock %}

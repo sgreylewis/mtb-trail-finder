@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.white {background-color:rgba(255, 255, 255, .3);}
+.main {
+  background-color: rgba(255, 255, 255, 0.7);
+  margin-top: 100px;
+
+}
+.move-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 7px;
+}
+button {
+            padding: 1vh 2vw;
+            background-color: cornflowerblue;
+            color: white;
+            border-radius: 16px;
+            border-color: white;
+            padding-left: 12px;
+            padding-right: 12px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: rgba(0,0,0,0);
+            color: cornflowerblue;
+            border-color: cornflowerblue;
+            border: 2px solid cornflowerblue;
+        }
+/*body {
+  background-image: url('https://hdwallsource.com/img/2014/5/snow-mountain-16540-17078-hd-wallpapers.jpg');
+  background-size: 100%
+}*/
+
+body {
+  background-image: url('static/images/sarah_burro_pass.jpg');
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+}
+@media only screen and (max-width: 600px) {
+    body {
+        background-size: auto;
+    }
+}
+
+</style>
+
+<div class="main" style="padding: 20px 25% 20px 25%;">
+
+  <h3><b>Get recommendations for trails based on your location:</b></h3>
+
+<br>
+
+
+<form action='/location_recommendations', method='POST'>
+
+<div><h4><b>Step 1: Where are you? (e.g., 1644 Platte Street, Denver)</b></h4></div>
+<input type = "text" name="location" id="select_location" class="selectpicker form-control">
+
+<br>
+
+<div><h4><b>Step 2: What's the furthest distance(in miles) you'd prefer to drive to the trailhead?</b></h4></div>
+<input type = "text" name="radius" id="select_radius" class="selectpicker form-control">
+
+<br>
+
+<div><h4><b>Step 3 (Optional): How far(in miles) do you want to ride?</b></h4></div>
+
+<select name="length_range" id="select_length_range" class="selectpicker form-control">
+    <option selected="selected" value = ''>How far do you want to ride today?</option>
+    <option value=''>Any distance is fine.</option>
+    {% for length_range in df['length_range'].unique()|sort %}
+    <option value="{{ length_range }}">{{ length_range }}</option>
+    {% endfor %}
+</select>
+
+<br>
+
+<div><h4><b>Step 4 (Optional): Choose the difficulty level you would like recommended.</b></h4></div>
+<div class="white">
+
+<form action='/recommendations', method='GET'>
+  <input type="checkbox" name="Green" value="Green"> <b>Green Trails</b><br>
+  <input type="checkbox" name="Blue" value="Blue"> <b>Blue Trails</b><br>
+  <input type="checkbox" name="Black" value="Black"> <b>Black Trails</b><br>
+</div>
+<br>
+
+
+<div class='move-button'>
+<button type = "submit" >Submit Location and Radius.</button>
+</div>
+</form>
+</form>
+<br>
+<br>
+
+{% endblock %}
