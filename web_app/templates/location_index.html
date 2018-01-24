@@ -69,6 +69,20 @@ body {
 
 <br>
 
+<div><h4><b>Step 3 (Optional): How far in miles would you like to ride?</b></h4></div>
+<div class="white">
+
+<form action='/recommendations', method='GET'>
+  <input type="checkbox" name="0-5" value="0-5"> <b>0-5 miles</b><br>
+  <input type="checkbox" name="5-10" value="5-10"> <b>5-10 miles</b><br>
+  <input type="checkbox" name="10-15" value="10-15"> <b>10-15 miles</b><br>
+  <input type="checkbox" name="15-20" value="10-15"> <b>15-20 miles</b><br>
+  <input type="checkbox" name="20-25" value="10-15"> <b>20-25 miles</b><br>
+  <input type="checkbox" name="25-30" value="10-15"> <b>25-30 miles</b><br>
+  <input type="checkbox" name="30+" value="30+"> <b>30+ miles</b><br>
+</div>
+
+<!--
 <div><h4><b>Step 3 (Optional): How far(in miles) do you want to ride?</b></h4></div>
 
 <select name="length_range" id="select_length_range" class="selectpicker form-control">
@@ -78,7 +92,7 @@ body {
     <option value="{{ length_range }}">{{ length_range }}</option>
     {% endfor %}
 </select>
-
+-->
 <br>
 
 <div><h4><b>Step 4 (Optional): Choose the difficulty level you would like recommended.</b></h4></div>

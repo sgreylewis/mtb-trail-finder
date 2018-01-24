@@ -14,7 +14,7 @@ import math
 app = Flask(__name__)
 
 def scale_columns(df):
-    columns_to_scale = list(df.select_dtypes(exclude=['object']).columns.difference(['latitude', 'longitude']))
+    columns_to_scale = list(df.select_dtypes(exclude=['object']).columns.difference(['latitude', 'longitude', 'stars']))
     for col in columns_to_scale:
         df[col + "_scaled"] = preprocessing.scale(df[col])
     return df
@@ -115,6 +115,8 @@ def cold_start(start, miles, length_range = None, difficulty = None):
             'category', 'miles away', 'summary', 'url']
         new_df = new_df[columns_to_output]
         new_df.sort_values(by = 'miles away', inplace = True)
+        new_df = new_df.reset_index(drop=True)
+        new_df.index = new_df.index+1
         return new_df
 
 @app.route('/', methods =['GET','POST'])
@@ -134,15 +136,31 @@ def get_location():
 def location_recommendations():
     location = str(request.form.get('location'))
     radius = float(request.form.get('radius'))
-    length_range = str(request.form.get('length_range'))
+    length_range = None
+    #length_range = str(request.form.get('length_range'))
     difficulty = None
 
     if location == '' or radius == '':
         return 'You must give your current location and desired radius from your location.'
 
     else:
-        if length_range == '':
-            length_range = None
+        if request.form.get('0-5'):
+            length_range = '0-5'
+        if request.form.get('5-10'):
+            length_range = '5-10'
+        if request.form.get('10-15'):
+            length_range = '10-15'
+        if request.form.get('15-20'):
+            length_range = '15-20'
+        if request.form.get('20-25'):
+            length_range = '20-25'
+        if request.form.get('25-30'):
+            length_range = '25-30'
+        if request.form.get('30+'):
+            length_range = '30+'
+
+        #if length_range == '':
+        #    length_range = None
 
         if request.form.get('Green'):
             difficulty = 'Green'

@@ -48,7 +48,7 @@ def bin_column(df, column, new_column, cut_points, label_names):
 if __name__ == '__main__':
 
     #US_trails = pd.read_csv('US_trails_1step.csv')
-    US_trails = pd.read_csv('data/US_trails_half_step.csv')
+    US_trails = pd.read_csv('../data/US_trails_half_step.csv')
 
     raw_columns = ['ascent', 'conditionDate', 'conditionDetails',
        'conditionStatus', 'descent', 'difficulty', 'high', 'id', 'imgMedium',
@@ -60,12 +60,11 @@ if __name__ == '__main__':
     #dropping low and high because I don't need the elevation points
     #dropping starVotes, summary, and url, though I'd like to include those as outputs on the website
     US_trails.drop(['conditionDate', 'conditionDetails', 'conditionStatus',
-                'high', 'id', 'imgMedium', 'imgSmall', 'imgSmallMed', 'imgSqSmall', 'low',
-               'starVotes'], axis = 1, inplace = True)
+                'high', 'id', 'imgMedium', 'imgSmall', 'imgSmallMed', 'imgSqSmall', 'low'], axis = 1, inplace = True)
 
    #reordering the columns
     ordered_columns = ['name','location','State','type','difficulty','length','ascent',
-                    'descent','stars','latitude','longitude','summary', 'url']
+                    'descent','stars','starVotes','latitude','longitude','summary', 'url']
     US_trails = US_trails[ordered_columns]
 
     #this gets rid of the trails with missing difficulty ratings
