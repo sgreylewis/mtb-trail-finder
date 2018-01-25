@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, jsonify
 import pickle
 import pandas as pd
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from geopy.geocoders import GoogleV3, Nominatim
@@ -14,7 +14,8 @@ import math
 app = Flask(__name__)
 
 def scale_columns(df):
-    columns_to_scale = list(df.select_dtypes(exclude=['object']).columns.difference(['latitude', 'longitude', 'stars']))
+    columns_to_scale = list(df.select_dtypes(exclude=['object']).columns.difference(['stars','starVotes',
+                        'latitude','longitude','type_Featured Ride', 'type_Trail']))
     for col in columns_to_scale:
         df[col + "_scaled"] = preprocessing.scale(df[col])
     return df
@@ -30,7 +31,25 @@ df = scale_columns(df)
 
 X = get_scaled_array(df)
 
-#YOU MIGHT NEED TO TAKE LAT/LON OUT OF YOUR CALCULATIONS SINCE YOU'RE FILTERING FOR LOCATION ANYWAYS
+def euclidean_dist_recs(index, desired_state = None, desired_city_town= None):
+    trail = X[index].reshape(1,-1)
+    ed = euclidean_distances(trail, X)
+    rec_index = np.argsort(ed)[0][1:]
+    ordered_df = df.loc[rec_index]
+    if desired_state is not None:
+        ordered_df = ordered_df[ordered_df['state']== desired_state]
+    if desired_city_town is not None:
+        ordered_df = ordered_df[ordered_df['city/town']== desired_city_town]
+    rec_df = ordered_df.head(20)
+    rec_df = rec_df.reset_index(drop=True)
+    rec_df.index = rec_df.index+1
+    orig_row = df.loc[[index]].rename(lambda x: 'original')
+    total = pd.concat([orig_row, rec_df])
+    columns_to_output = ['name', 'location', 'difficulty', 'length', 'ascent', 'descent',
+       'stars', 'summary', 'url'] #'category'
+    output = total[columns_to_output]
+    return output
+
 def cos_sim_recs(index, desired_state=None, desired_city_town=None):
     trail = X[index].reshape(1,-1)
     cs = cosine_similarity(trail, X)
@@ -40,14 +59,13 @@ def cos_sim_recs(index, desired_state=None, desired_city_town=None):
         ordered_df = ordered_df[ordered_df['state']== desired_state]
     if desired_city_town is not None:
         ordered_df = ordered_df[ordered_df['city/town']== desired_city_town]
-    #rec_df = ordered_df.head(n)
     rec_df = ordered_df.head(20)
     rec_df = rec_df.reset_index(drop=True)
     rec_df.index = rec_df.index+1 #this makes it so that there's no index 0 shown
     orig_row = df.loc[[index]].rename(lambda x: 'original')
     total = pd.concat([orig_row, rec_df])
-    columns_to_output = ['name', 'location', 'difficulty', 'stars', 'length', 'ascent', 'descent',
-       'category', 'summary', 'url']
+    columns_to_output = ['name', 'location', 'difficulty', 'length', 'ascent', 'descent',
+       'stars', 'summary', 'url'] #'category'
     output = total[columns_to_output]
     return output
 
@@ -90,13 +108,16 @@ def cold_start(start, miles, length_range = None, difficulty = None):
         new_df = new_df[new_df['length_range'] == '20-25']
     if length_range == '25-30':
         new_df = new_df[new_df['length_range'] == '25-30']
+    if length_range == '30+':
+        new_df = new_df[new_df['length_range'] == '30+']
+    '''
     if length_range == '30-50':
         new_df = new_df[new_df['length_range'] == '30-50']
     if length_range == '50-100':
         new_df = new_df[new_df['length_range'] == '50-100']
     if length_range == '100+':
         new_df = new_df[new_df['length_range'] == '100+']
-
+    '''
     if difficulty == 'Green':
         difficulties = ['Green', 'Green/Blue']
         new_df = new_df[new_df['difficulty'].isin(difficulties)]
@@ -111,8 +132,8 @@ def cold_start(start, miles, length_range = None, difficulty = None):
         return "There are no trails that meet your requirements. Try expanding your search."
     else:
         new_df['miles away'] = new_df.apply(get_vincenty, axis = 1, args = (loc_lat_lon,))
-        columns_to_output = ['name', 'location', 'stars', 'difficulty', 'length', 'ascent', 'descent',
-            'category', 'miles away', 'summary', 'url']
+        columns_to_output = ['name', 'location', 'difficulty', 'length', 'ascent', 'descent',
+           'stars', 'category', 'miles away', 'summary', 'url']
         new_df = new_df[columns_to_output]
         new_df.sort_values(by = 'miles away', inplace = True)
         new_df = new_df.reset_index(drop=True)
@@ -203,7 +224,8 @@ def recommendations():
         elif dest_state != '' and dest_city_town == 'Select a city or town...':
             dest_city_town = None
 
-        rec_df = cos_sim_recs(index, dest_state, dest_city_town)
+        #rec_df = cos_sim_recs(index, dest_state, dest_city_town)
+        rec_df = euclidean_dist_recs(index, dest_state, dest_city_town)
         return render_template('recommendations.html',rec_df=rec_df)
 
 
