@@ -6,9 +6,9 @@ tr:nth-child(even) {background: #CCC}
 tr:nth-child(odd) {background: #FFF}
 
 .table {
-text-align: center;
-display: flex;
-justify-content: center;
+text-align: left;
+display: left;
+justify-content: left;
 }
 @media only screen and (max-width: 1000px) {
     .table {
@@ -61,15 +61,15 @@ button {
 <table class='table'>
   <tr>
   <th>#</th>
-  {% for col in rec_df.columns %}
+  <th>Name</th>
+  {% for col in rec_df.columns if col not in ['Name', 'Link'] %}
   <th>{{col}}</th>
   {% endfor %}
   </tr>
   {% for i, row in rec_df.iloc[0:].iterrows() %}
-  <!-- <tr class="{{row.difficulty.lower().replace(' ','')}}"> -->
-  <!-- <tr class="{{row.difficulty.lower().replace(' ','')}}"> -->
     <td>{{i}}</td>
-    {% for entry in row %}
+    <td> <a href = {{row.Link}}><left>{{row.Name}}</left> </a> </td>
+    {% for entry in row[:9] %}
     <td>{{ entry }}</td>
     {% endfor %}
   </tr>

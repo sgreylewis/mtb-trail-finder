@@ -14,14 +14,15 @@ import math
 app = Flask(__name__)
 
 def scale_columns(df):
-    columns_to_scale = list(df.select_dtypes(exclude=['object']).columns.difference(['stars','starVotes',
-                        'latitude','longitude','type_Featured Ride', 'type_Trail']))
+    columns_to_scale = list(df.select_dtypes(exclude=['object']).columns.difference(['starVotes',
+    'latitude','longitude'])) # 'stars', 'type_Featured Ride', 'type_Trail']))
     for col in columns_to_scale:
         df[col + "_scaled"] = preprocessing.scale(df[col])
     return df
 
 def get_scaled_array(df):
     scaled_cols = [col for col in df.columns if 'scaled' in col]
+    print (scaled_cols)
     array = df[scaled_cols].values
     return array
 
@@ -45,9 +46,11 @@ def euclidean_dist_recs(index, desired_state = None, desired_city_town= None):
     rec_df.index = rec_df.index+1
     orig_row = df.loc[[index]].rename(lambda x: 'original')
     total = pd.concat([orig_row, rec_df])
-    columns_to_output = ['name', 'location', 'difficulty', 'length', 'ascent', 'descent',
-       'stars', 'summary', 'url'] #'category'
+    columns_to_output = ['location', 'difficulty', 'length', 'ascent', 'descent',
+       'stars', 'category', 'summary', 'url', 'name']
     output = total[columns_to_output]
+    output.columns = ['Location', 'Difficulty', 'Length', 'Ascent', 'Descent',
+       'Rating', 'Category', 'Summary', 'Link', 'Name']
     return output
 
 def cos_sim_recs(index, desired_state=None, desired_city_town=None):
@@ -64,9 +67,11 @@ def cos_sim_recs(index, desired_state=None, desired_city_town=None):
     rec_df.index = rec_df.index+1 #this makes it so that there's no index 0 shown
     orig_row = df.loc[[index]].rename(lambda x: 'original')
     total = pd.concat([orig_row, rec_df])
-    columns_to_output = ['name', 'location', 'difficulty', 'length', 'ascent', 'descent',
-       'stars', 'summary', 'url'] #'category'
+    columns_to_output = ['location', 'difficulty', 'length', 'ascent', 'descent',
+       'stars', 'category', 'summary', 'url', 'name']
     output = total[columns_to_output]
+    output.columns = ['Location', 'Difficulty', 'Length', 'Ascent', 'Descent',
+       'Rating', 'Category', 'Summary', 'Link', 'Name']
     return output
 
 def get_vincenty(row, *args):
@@ -132,13 +137,16 @@ def cold_start(start, miles, length_range = None, difficulty = None):
         return "There are no trails that meet your requirements. Try expanding your search."
     else:
         new_df['miles away'] = new_df.apply(get_vincenty, axis = 1, args = (loc_lat_lon,))
-        columns_to_output = ['name', 'location', 'difficulty', 'length', 'ascent', 'descent',
-           'stars', 'category', 'miles away', 'summary', 'url']
+        columns_to_output = ['location', 'difficulty', 'length', 'ascent', 'descent',
+           'stars', 'category', 'miles away', 'summary', 'url', 'name']
         new_df = new_df[columns_to_output]
         new_df.sort_values(by = 'miles away', inplace = True)
         new_df = new_df.reset_index(drop=True)
         new_df.index = new_df.index+1
+        new_df.columns = ['Location', 'Difficulty', 'Length', 'Ascent', 'Descent',
+           'Rating', 'Category', 'Miles Away', 'Summary', 'Link', 'Name']
         return new_df
+
 
 @app.route('/', methods =['GET','POST'])
 def index():
@@ -195,9 +203,7 @@ def location_recommendations():
         if isinstance(rec_df, str):
             return rec_df
         else:
-
             return render_template('location_recommendations.html',rec_df=rec_df)
-
 
 @app.route('/recommendations', methods=['GET','POST'])
 def recommendations():
@@ -224,10 +230,9 @@ def recommendations():
         elif dest_state != '' and dest_city_town == 'Select a city or town...':
             dest_city_town = None
 
-        #rec_df = cos_sim_recs(index, dest_state, dest_city_town)
-        rec_df = euclidean_dist_recs(index, dest_state, dest_city_town)
+        rec_df = cos_sim_recs(index, dest_state, dest_city_town)
+        #rec_df = euclidean_dist_recs(index, dest_state, dest_city_town)
         return render_template('recommendations.html',rec_df=rec_df)
-
 
 @app.route('/get_city_towns')
 def get_city_towns(): #this makes the dropdown for the trails

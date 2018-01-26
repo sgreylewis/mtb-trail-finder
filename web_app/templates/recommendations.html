@@ -6,9 +6,9 @@ tr:nth-child(even) {background: #CCC}
 tr:nth-child(odd) {background: #FFF}
 
 .table {
-text-align: center;
-display: flex;
-justify-content: center;
+text-align: left;
+display: left;
+justify-content: left;
 }
 @media only screen and (max-width: 1000px) {
     .table {
@@ -58,16 +58,19 @@ button {
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 <table class='table'>
   <tr>
-  <th> </th>
-  {% for col in rec_df.columns %}
+  <th>  </th>
+  <th>Name</th>
+  {% for col in rec_df.columns if col not in ['Name', 'Link'] %}
   <th>{{col}}</th>
   {% endfor %}
   </tr>
    <!-- this iterates over the rows and first column as index, Series pairs -->
+
   {% for i, row in rec_df.iloc[:1].iterrows() %}
-    <!-- <tr class="{{row.difficulty.lower().replace(' ','')}}"> #gets the difficulty, returns a color which then calls the class that's the same color-->
+  <!-- <tr class="{{row.Difficulty.lower().replace(' ','')}}"> #gets the difficulty, returns a color which then calls the class that's the same color-->
     <td> </td>
-    {% for entry in row %}
+    <td> <a href = {{row.Link}}><left>{{row.Name}}</left> </a> </td>
+    {% for entry in row[:8] %}
     <td>{{ entry }}</td>
     {% endfor %}
 
@@ -80,15 +83,16 @@ button {
 <table class='table'>
   <tr>
   <th>#</th>
-  {% for col in rec_df.columns %}
+  <th>Name</th>
+  {% for col in rec_df.columns if col not in ['Name', 'Link'] %}
   <th>{{col}}</th>
   {% endfor %}
   </tr>
   {% for i, row in rec_df.iloc[1:].iterrows() %}
-  <!-- <tr class="{{row.difficulty.lower().replace(' ','')}}"> -->
-  <!-- <tr class="{{row.difficulty.lower().replace(' ','')}}"> -->
+  <!-- <tr class="{{row.Difficulty.lower().replace(' ','')}}"> -->
     <td>{{i}}</td>
-    {% for entry in row %}
+    <td> <a href = {{row.Link}}><left>{{row.Name}}</left> </a> </td>
+    {% for entry in row[:8] %}
     <td>{{ entry }}</td>
     {% endfor %}
   </tr>

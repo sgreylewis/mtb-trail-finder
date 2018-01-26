@@ -92,6 +92,10 @@ if __name__ == '__main__':
     #I have to drop all trails that don't have a location since these locations won't populate on my Flask dropdown menu
     US_trails = US_trails[US_trails['city/town'] != ''].reset_index(drop=True)
 
+    #the website needs to have a trail dropdown with the trail name and it's location so that
+    #I don't need two dropdowns for location and then trail name
+    US_trails['name_city/town'] = US_trails['name'] + " in " + US_trails['city/town']
+
     #capitalizing the first letter of each state and uppercasing DC
     US_trails['state'] = US_trails['State'].apply(capitalize_state)
     US_trails.drop(['State'], axis = 1, inplace = True)
