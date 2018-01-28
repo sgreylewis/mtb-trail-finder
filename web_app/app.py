@@ -83,12 +83,9 @@ def cold_start(start, miles, length_range = None, difficulty = None):
     degrees_to_radians = math.pi/180.0
     radians_to_degrees = 180.0/math.pi
 
-<<<<<<< HEAD
     #geolocator = GoogleV3()
-    geolocator = GoogleV3(api_key='AIzaSyDM-DHwWksQSwcsZideBmP2pWq_-oXMJZY')
-=======
     #geolocator = GoogleV3(api_key = 'XXXXX')
->>>>>>> 73f590fe42454e2c3ba44f5b84088bf6ad85cffc
+
     loc = geolocator.geocode(start)
     loc_lat_lon = (loc.latitude, loc.longitude)
     #print (location.address)
