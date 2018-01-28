@@ -66,7 +66,58 @@ button {
 
 <br><br>
 
+<div><h4><b>Step 2: Choose a trail you have ridden in that state.</b>
 
+</h4> </div>
+
+<select name="name_city_town" id="select_name_city_town" class="selectpicker form-control" disabled>
+    <option selected="selected" value = ''>Select a trail from a location in that state...</option>
+</select>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script charset="utf-8" type="text/javascript">
+    $(function() {
+        var dropdown = {
+            state: $('#select_state'),
+            name_city_town: $('#select_name_city_town')
+        };
+
+        // function to call XHR and update goodsrec dropdown
+        function update_name_city_town() {
+            var state = dropdown.state.val();
+            dropdown.name_city_town.attr('disabled', 'disabled');
+            console.log(state);
+
+            if (state.length) {
+                dropdown.name_city_town.empty();
+                //$.getJSON("{{ url_for('get_trail_names') }}", {state: state}, function(data) {
+                $.getJSON("/get_trails", {state: state}, function(data) {
+                    console.log(data);
+      //might not need the console.log, for each item in data, value is the index and text is the name of the location
+                    data.forEach(function(item) {
+                        dropdown.name_city_town.append(
+                            $('<option>', {
+                                value: item.id,
+                                text: item.name
+                            })
+                        );
+                    });
+                    dropdown.name_city_town.removeAttr('disabled'); //this means that you can't click on it until it's been populated
+                });
+            }
+        }
+
+        dropdown.state.on('change', function() {
+            update_name_city_town();
+        });
+
+    });
+</script>
+
+<br><br>
+
+<!--
 <div><h4><b>Step 2: Choose a city/town that you have ridden in that state.</b>
 
 </h4> </div>
@@ -117,8 +168,9 @@ button {
 </script>
 
 <br><br>
+-->
 
-
+<!--
 <div><h4><b>Step 3: Choose a trail that you have ridden in that location.</b>
 
 </h4> </div>
@@ -169,11 +221,12 @@ button {
 
     });
 </script>
-
 <br>
 <br>
+-->
 
-<div><h4><b>Step 4 (Optional): Choose the state you are planning on riding in.</b></h4></div>
+
+<div><h4><b>Step 3 (Optional): Choose the state you are planning on riding in.</b></h4></div>
 
 <select name="dest_state" id="select_state_dest" class="selectpicker form-control">
     <option selected="selected" value = ''>Where are you riding today?</option>
@@ -186,7 +239,7 @@ button {
 <br>
 <br>
 
-<div><h4><b>Step 5 (Optional): Choose a location that you'd like to ride in that state.</b>
+<div><h4><b>Step 4 (Optional): Choose a location that you'd like to ride in that state.</b>
 
 </h4> </div>
 

@@ -83,8 +83,7 @@ def cold_start(start, miles, length_range = None, difficulty = None):
     degrees_to_radians = math.pi/180.0
     radians_to_degrees = 180.0/math.pi
 
-    geolocator = GoogleV3()
-    #geolocator = GoogleV3(key=AIzaSyDM-DHwWksQSwcsZideBmP2pWq_-oXMJZY)
+    geolocator = GoogleV3(api_key = 'XXXXX')
     loc = geolocator.geocode(start)
     loc_lat_lon = (loc.latitude, loc.longitude)
     #print (location.address)
@@ -208,20 +207,20 @@ def location_recommendations():
 @app.route('/recommendations', methods=['GET','POST'])
 def recommendations():
     state = request.form.get('state')
-    city_town = request.form.get('city_town')
-    trail = request.form.get('trail')
+    #name_city_town = request.form.get('name_city_town')
+    name_city_town = request.form.get('name_city_town')
     dest_state = request.form.get('dest_state') #desired state, also need to do desired location in that state
     dest_city_town = request.form.get('dest_city_town')
     print (dest_state)
     print (dest_city_town)
     if state == '':
         return 'You must select a state you have ridden in.'
-    if city_town == 'Select a city or town...':
-        return 'You must select a city or town you have ridden in from the state you chose.'
-    if trail == '':
-        return 'You must select a trail.'
+    #if city_town == 'Select a city or town...':
+    #    return 'You must select a city or town you have ridden in from the state you chose.'
+    #if name_city_town == '':
+    #    return 'You must select a trail.'
     else: #if trail != '':
-        index = int(trail) #WHY INT OF TRAIL? trail is the index of the trail
+        index = int(name_city_town) #WHY INT OF TRAIL? trail is the index of the trail
 
         if dest_state == '':
             dest_state = None
@@ -249,18 +248,18 @@ def get_city_towns(): #this makes the dropdown for the trails
 @app.route('/get_trails')
 def get_trail_names(): #this makes the dropdown for the trails
     state = request.args.get('state') #pulls in whatever state returned, this will require the state and the location
-    city_town = request.args.get('city_town') #pulls in the text for location since I set the item.value as the text
-    print (type(city_town))
-    if state and city_town:
+    #city_town = request.args.get('city_town') #pulls in the text for location since I set the item.value as the text
+    #print (type(city_town))
+    if state:
         sub_df = df[df['state'] == state]
-        print(sub_df)
-        sub_df = sub_df[sub_df['city/town'] == city_town]
+        #print(sub_df)
+        #sub_df = sub_df[sub_df['city/town'] == city_town]
         sub_df.sort_values(by='name',inplace=True) #sorted alphabetically
-        id_name = [("","Select a Trail...")] + list(zip(list(sub_df.index),list(sub_df['name']))) #gets the id, the trail name, and difficulty level(), get the colors so you can color it that color in the dropdown
+        id_name = [("","Select a Trail...")] + list(zip(list(sub_df.index),list(sub_df['name_city/town']))) #gets the id, the trail name, and difficulty level(), get the colors so you can color it that color in the dropdown
         trail_data = [{"id": str(x[0]), "name": x[1]} for x in id_name] #id is a string so trail that it returns is a string of an id, color goes into the color class to choose a background color
         return jsonify(trail_data) #turns it into json, like a dictionary
     else:
-        return 'You must enter a state and location.'
+        return "You must enter a state that you've ridden in."
 
 if  __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True, threaded=True)
