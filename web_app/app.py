@@ -9,6 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from geopy.geocoders import GoogleV3, Nominatim
 from geopy.distance import vincenty, great_circle
 import math
+import os
 
 
 app = Flask(__name__)
@@ -83,8 +84,8 @@ def cold_start(start, miles, length_range = None, difficulty = None):
     degrees_to_radians = math.pi/180.0
     radians_to_degrees = 180.0/math.pi
 
-    
-    #geolocator = GoogleV3(api_key = 'XXXXX')
+
+    geolocator = GoogleV3(api_key = os.environ['GOOGLE_API'])
     loc = geolocator.geocode(start)
     loc_lat_lon = (loc.latitude, loc.longitude)
     #print (location.address)
