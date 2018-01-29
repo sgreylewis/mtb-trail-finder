@@ -1,4 +1,4 @@
-# Shred-Head: A Mountain Bike Trail Recommender
+# www.mtbtrailfinder.com: A Mountain Bike Trail Finder
 
 ## Motivation
 
