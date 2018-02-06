@@ -108,19 +108,54 @@ Let's take a look at three popular trails in Colorado's Front Range:
 
 Name | Difficulty | Length | Ascent | Descent | Stars | Featured Ride | Trail
 --- | --- | --- | --- | --- | --- | --- | ---
-*Betasso* | 2 | 7.4 | 829 | -829 | 3.9 | 1 | 0
-*Marshall* | 2 | 10.3 | 960 | -961 | 3.6 | 1 | 0
-*Apex Park* | 4 | 9.4 | 1668 | -1667 | 4.4 | 1 | 0
+*Betasso Preserve* | 2 | 7.4 | 829 | -829 | 3.9 | 1 | 0
+*Marshall Mesa* | 2 | 10.3 | 960 | -961 | 3.6 | 1 | 0
+*Apex Park Tour* | 4 | 9.4 | 1668 | -1667 | 4.4 | 1 | 0
 
-ADD IN THE ACTUAL COLUMNS AND DATA FOR BETASSO PRESERVE, MARSHALL MESA, AND APEX PARK
+Betasso Preserve and Marshall Mesa are two trails in the Boulder area that are agreed
+upon by local riders as very similar and great trails for beginners.  Apex Park Tour
+is agreed upon by local riders as not similar to Betasso or Marshall as it is more
+fit for advanced riders.  But how do we quantify similarity or dissimilarity?  First
+we need to prepare the data.  
 
-![cosine vectors and angle](images/Cosine_Sim.png)
+These features have different ranges in their values and different units of measurement.  For example, a difference of three miles in length between two trails is different than a difference of three feet in ascent; therefore I scaled each feature value by subtracting it by the feature's mean and then dividing that difference by the feature's standard deviation. I did this so that the magnitude of certain features would not have too much influence when measuring similarity and so that differences in units would no longer matter.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.
+I put each trail's scaled features into vectors and am now ready to measure similarity.
+
+![Trail Vectors](images/trail_vectors.png)
+
+Considering each trail and it's features as a vector, I wanted to be able to measure the similarity of any one vector to all the other vectors.  There are many distance metrics available for measuring
+similarity; based on investigation and intuition, I chose Cosine Similarity to measure the similarity between my vectors because it measures the angle, or direction, between the vectors without taking the magnitude of the vectors into consideration.  Looking at the two dimensional space below, you can imagine
+how cosine similarity only measures the angle between the vectors, not taking magnitude into account:
+
+![cosine vectors and angle](images/Cosin_sim_A_B.png)
+
+In essence, it measures the ratio of the trails' features, instead of how big or small those features are.  I wanted my metric to prioritize how similar trails are in terms of their ratios, instead of just how close their values are.  Two vectors with a cosine value closer to 1 are considered similar
+eachother, while two vectors with a cosine value closer to -1 are considered not
+similar to eachother.  For further clarification on those values, a quick review
+of the unit circle may help.  As you may remember from high school trigonometry,
+the cosine value of an angle is the ratio of the angle's adjacent side over the
+triangle's hypotenuse(the longest side, or side opposite the 90 degree angle).  
+In the diagram below, the orange vector is the adjacent side and Vector 2 is the
+hypotenuse.  You can see that when the angle between Vector 1 and Vector 2 is 0
+degrees, the orange, adjacent side is the same length as Vector 2, making the cosine
+ratio equal to 1.  As the angle between Vector 1 and Vector 2 increases, the orange,
+adjacent side decreases in length, making the cosine ratio smaller and smaller,
+until it becomes 0 at 90 degrees; as Vector 2 passes 90 degrees, the orange, adjacent
+side gets longer, but in the negative direction until the cosine ratio reaches -1,
+signifying that Vector 1 and Vector 2 are pointed in opposite directions, and therefore
+not similar at all.  
 
 ![cosine vectors and angle simulation](images/cosine1.gif)
 
-These features have different ranges in their values and different units of measurement; for example a difference of three miles in length between two trails is different than a difference of three feet in ascent; therefore I scaled each feature value by subtracting it by the feature's mean and then dividing that difference by the feature's standard deviation. I did this so that the magnitude of certain features would not have too much influence on a measurement of similarity and so that differences in units would no longer matter.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.  
+To calculate the cosine similarity value between two vectors, we use the following
+formula, which multiples the two vectors and divides by their magnitudes.
 
-Considering each trail and it's features as a vector, I wanted to be able to measure the similarity of any one vector to all the other vectors.  Cosine Similarity and Euclidean Distance are two popular methods to measure vector similarity; I chose Cosine Similarity to measure the similarity between my vectors because it measures the angle, or direction, between the vectors without taking the magnitude of the vectors into consideration.  In essence, it measures the ratio of the trails' features, instead of how big or small those features are.  I wanted my metric to prioritize how similar trails are in terms of their ratios, instead of just how close their values are.  
+![Cosine similarity formula](images/Cosin_sim_formula.png)
+
+When this formula is applied to our Betasso Preserve and Marshall Mesa vectors, we
+are not surprised to get a value of .99, meaning that the vectors are very similar,
+while when comparing Betasso Preserve and Apex Park Tour, the formula gives a value
+of -.41, meaning that the trails are not similar.
 
 ### Cold Start Recommender Based on Location
 
