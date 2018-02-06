@@ -75,7 +75,7 @@ ADD IN THE ACTUAL COLUMNS AND DATA FOR BETASSO PRESERVE, MARSHALL MESA, AND APEX
 
 ![cosine vectors and angle](images/Cosine_Sim.png)
 
-![cosine vectors and angle simulation](images/cosine.ggb)
+![cosine vectors and angle simulation](images/cosine.gif)
 
 These features have different ranges in their values and different units of measurement; for example a difference of three miles in length between two trails is different than a difference of three feet in ascent; therefore I scaled each feature value by subtracting it by the feature's mean and then dividing that difference by the feature's standard deviation. I did this so that the magnitude of certain features would not have too much influence on a measurement of similarity and so that differences in units would no longer matter.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.  
 
