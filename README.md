@@ -16,8 +16,7 @@ such as Lair O' the Bear, but wouldn’t it be nice if you could get a recommend
 
 I wrote python code that made enough requests to [MTB Project's API](https://www.mtbproject.com//data) to get
 data on 26,752 trails in all 50 states and the nation's capital.  The API data came
-in JSON files, which were very easy to access, put into pandas dataframes, and concat.  
-The raw features were:
+in JSON files, which were very easy to access, put into pandas dataframes, and concat. The raw features were:
 * 'ascent'
 * 'conditionDate'
 * 'conditionDetails'
@@ -106,6 +105,7 @@ As I mentioned in motivation, the question that most riders want to know about a
 as these are the traits that are most highly correlated according to my heatmap and logically define a rider's experience and preference for a trail.  
 
 Let's take a look at three popular trails in Colorado's Front Range:
+
 Name | Difficulty | Length | Ascent | Descent | Stars | Featured Ride | Trail
 --- | --- | --- | --- | --- | --- | --- | ---
 *Betasso* | 2 | 7.4 | 829 | -829 | 3.9 | 1 | 0
