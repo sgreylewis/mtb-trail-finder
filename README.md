@@ -3,34 +3,59 @@
 ## Motivation
 
 As a mountain biker, whether you’ve been riding for years or just starting out,
-you’re always looking for the next trail to shred.  It’s easiest to get recommendations
-from other riders in the parking lot of your favorite trail, but you can also ask
-around at local bike shops, Facebook or Meetup groups for mountain bikers, and websites
-such as [Trail Forks](https://www.trailforks.com) and [MTBProject](https://www.mtbproject.com).  
+you’re always looking for the next trail to shred.  It’s easiest to get recommendations from other riders in the parking lot of your favorite trail, but you can also ask around at local bike shops, Facebook or Meetup groups for mountain bikers, and websites such as [MTBProject](https://www.mtbproject.com).  
 Still, when being told that a ride unknown to you is “totally epic”, you wonder,
 “Will it be fast and flowy or more rocky and technical?  Are there lots of drops
 and if so, can I roll them?  Is it mostly climbing, descending, or an equal amount
-of both? Is it an out and back, loop, lollipop, or do I need a shuttle? If it’s going
-to be a long day in the saddle, are there bailouts just in case?”  MTBProject.com
-and Trailforks.com do a good job of answering these questions for you when you search
-for the stats of a specific trail, but wouldn’t it be nice if you could get a recommendation
-based on the trails you know and like?  Or if you know you want a new ride that’s
-a certain length, within a certain distance of where you are, and a certain level
-of technicality, what should you ride?  Whether you’ve ridden all the trails in
-your area and are looking for a new one, or are headed to Durango for a weekend
-and looking for some downhill shuttled rides, www.mtbtrailfinder.com has the perfect
-ride tailored to your desires.
+of both? Is it an out and back, loop, lollipop, or do I need a shuttle? If it’s going to be a long day in the saddle, are there bailouts just in case?”  MTBProject.com doe a good job of answering these questions for you when you search
+for the stats of a specific trail,
+![Lair O' the Bear](images/LairOtheBear.png)
+such as Lair O' the Bear, but wouldn’t it be nice if you could get a recommendation based on the trails you know and like?  Or if you know you want a new ride that’s a certain length, within a certain distance of where you are, and a certain level of technicality, what should you ride?  Whether you’ve ridden all the trails in your area and are looking for a new one, or are headed to Durango for a weekend and looking for some downhill shuttled rides, www.mtbtrailfinder.com has the perfect ride tailored to your desires.
 
 ## Data
 
 I wrote python code that made enough requests to [MTB Project's API](https://www.mtbproject.com//data) to get
 data on 26,752 trails in all 50 states and the nation's capital.  The API data came
-in JSON files, which were very easy to access, put into pandas dataframes, and concat.  The raw features were:
-['ascent', 'conditionDate', 'conditionDetails', 'conditionStatus', 'descent', 'difficulty','high', 'id', 'imgMedium', 'imgSmall', 'imgSmallMed', 'imgSqSmall', 'latitude', 'length', 'location', 'longitude', 'low', 'name', 'starVotes', 'stars', 'summary', 'type', 'url'].  
+in JSON files, which were very easy to access, put into pandas dataframes, and concat.  
+The raw features were:
+-'ascent'
+-'conditionDate'
+-'conditionDetails'
+-'conditionStatus'
+-'descent'
+-'difficulty'
+-'high'
+-'id'
+-'imgMedium'
+-'imgSmall'
+-'imgSmallMed'
+-'imgSqSmall'
+-'latitude'
+-'length'
+-'location'
+-'longitude'
+-'low'
+-'name'
+-'starVotes'
+-'stars'
+-'summary'
+-'type'
+-'url'  
 
 ## Feature Engineering
 
-Since I want to build a content-recommender that will compare trails on their features, I dropped ['conditionDate', 'conditionDetails', 'conditionStatus','high', 'id', 'imgMedium', 'imgSmall', 'imgSmallMed', 'imgSqSmall', 'low'] since I didn't believe those features, even the images, are the best indicators of what makes trails similar.  I didn't end up using all the remaining features, such as 'latitude', 'longitude', 'summary', and 'url', to make my comparisons but I kept them as I would need them in my website; I also created a few new columns for 'city/town' and 'state' so that I could later search the trails by state and/or location.  I found 5,804 trails were of the type 'Connector', which is a trail that is most likely less than 1 mile long and intended as a bypass or connection between trails or trail systems; therefore I didn't think it desirable to recommend them as trails to ride on.  I also dropped the 37 trails that had missing difficulty ratings, as this would be an attribute I would use for comparison of trails.  Knowing that riders would prefer to see a set of trails with a specific range of distances, I created a length_range column that categorized each trail within a certain distance range.  In order to make the comparisons, I needed to quantify all features that I planned to use so I encoded 'difficulty', and created dummy variable columns for 'type'.  Lastly, I cleaned up columns with string values to make them more presentable for visualizations and the website.  
+Since I want to build a content-recommender that will compare trails on their features, I dropped:
+-'conditionDate'
+-'conditionDetails'
+-'conditionStatus'
+-'high'
+-'id'
+-'imgMedium'
+-'imgSmall'
+-'imgSmallMed'
+-'imgSqSmall'
+-'low'
+ since I didn't believe those features, even the images, are the best indicators of what makes trails similar.  I didn't end up using all the remaining features, such as 'latitude', 'longitude', 'summary', and 'url', to make my comparisons but I kept them as I would need them in my website; I also created a few new columns for 'city/town' and 'state' so that I could later search the trails by state and/or location.  I found 5,804 trails were of the type 'Connector', which is a trail that is most likely less than 1 mile long and intended as a bypass or connection between trails or trail systems; therefore I didn't think it desirable to recommend them as trails to ride on.  I also dropped the 37 trails that had missing difficulty ratings, as this would be an attribute I would use for comparison of trails.  Knowing that riders would prefer to see a set of trails with a specific range of distances, I created a length_range column that categorized each trail within a certain distance range.  In order to make the comparisons, I needed to quantify all features that I planned to use so I encoded 'difficulty', and created dummy variable columns for 'type'.  Lastly, I cleaned up columns with string values to make them more presentable for visualizations and the website.  
 
 ## Exploratory Data Analysis through Visualizations and Maps
 
@@ -46,7 +71,7 @@ We see here that out of the six difficulty levels, most trails are labeled as bl
 
 ![Number of Trails by Difficulty](images/Number_trails_by_difficulty.png)
 
-These violin plots show that green trails are the most unrated and poorly rated of trails. It's interesting to see that as the difficulty level increases, so does the average rating; one can imagine that advanced riders are most likely the only ones attempting the double black trails and therefore rate them highly because of the challenge they give.  This graph also suggests that collaborative filtering would help to recommend trails to users who like the same trails, but the data on trail ratings per user is so parse that it would hard to make an accurate collaborative filtering recommender.  Again, MTBProject could give incentives to users in order to increase their number of ratings in order to gain more knowledge of each user.
+These violin plots show that green trails are the most unrated and poorly rated of trails. It's interesting to see that as the difficulty level increases, so does the average rating; one can imagine that advanced riders are most likely the only ones attempting the double black trails and therefore rate them highly because of the challenge they give.  This graph also suggests that collaborative filtering would help to recommend trails to users who like the same trails, but the data on trail ratings per user is so parse that it would be hard to make an accurate collaborative filtering recommender.  Again, MTBProject could give incentives to users in order to increase their number of ratings in order to gain more knowledge about each user.
 
 ![User Rating by difficulty](images/User_rating_by_difficulty.png)
 
@@ -59,7 +84,7 @@ These two graphs hint at the fact that the biggest factor in determining the dif
 ![Ascent by length and difficulty](images/Ascent_by_length_difficulty.png)
 ![Descent by length and difficulty](images/Descent_by_length_difficulty.png)
 
-This heatmap shows that the most strongly correlated quantitative columns of my data are length and ascent/descent.  This makes sense because as a trail gets longer, it increases in ascent/descent, unless it is a flat jeep road.
+This heatmap shows that the most strongly correlated quantitative columns of my data are length and ascent/descent.  This makes sense because as a trail gets longer, it increases in ascent/descent, unless it is a flat jeep road.  Overall, looking for the darker red and blue boxes, the features most highly correlated with each other are length, ascent, descent, difficulty, stars(which are the trail's rating), and type of trail.  The three types of trails are Connectors, Trails, and Featured Rides.  I dropped all Connectors earlier because they only meant to connect trails and different trail systems; they are not intended nor made to be a main part of any ride.  A trail is simply a single trail, while a featured ride is a connection of trails.  For example, at the Green Mountain trail system in Lakewood, Colorado, the Summit Loop is a trail, while the Summit Loop connected to the Box O' Rox trail connected to the Rooney Valley trail is a featured ride.  
 
 ![Heatmap of quantitative columns](images/Heatmap_quantitative_columns.png)
 
@@ -68,14 +93,28 @@ This heatmap shows that the most strongly correlated quantitative columns of my 
 
 ### Content Based Recommender
 
-As I mentioned in motivation, the question that most riders want to know about an unknown trail is, "What trails have I ridden are like this new one?"; therefore I knew that I wanted to build a recommender that would take a trail known to a rider and return all the trails in the country ordered by their similarity to the known trail.  The rider would then have the option of filtering the set of trails by state and city/town depending on where they would like to ride.  The columns I chose to compare for similarity are ['ascent','descent','difficulty_encoded','length','stars',
-'type_Featured Ride','type_Trail'] as these are the traits that are most highly correlated according to my heatmap and logically define a rider's experience and preference for a trail.  
+As I mentioned in motivation, the question that most riders want to know about an unknown trail is, "What trails have I ridden are like this new one?"; therefore I knew that I wanted to build a recommender that would take a trail known to a rider and return all the trails in the country ordered by their similarity to the known trail.  The rider would then have the option of filtering the set of trails by state and city/town depending on where they would like to ride.  The columns I chose to compare for similarity are:
+-'ascent'
+-'descent'
+-'difficulty_encoded'
+-'length'
+-'stars'
+-'type_Featured Ride'
+-'type_Trail'
+as these are the traits that are most highly correlated according to my heatmap and logically define a rider's experience and preference for a trail.  
+
+Let's take a look at three popular trails in Colorado's Front Range:
+**Name** | **Difficulty** | **Length** | **Ascent** | **Descent** | **Stars** | **Featured Ride** | **Trail**
+-------- | -------------- | ---------- | ---------- | ----------- | --------- | ----------------- | ---------
+_Betasso_ | 2 | 7.4 | 829 | -829 | 3.9 | 1 | 0
+_Marshall_ | 2 | 10.3 | 960 | -961 | 3.6 | 1 | 0
+_Apex Park_ | 4 | 9.4 | 1668 | -1667 | 4.4 | 1 | 0
 
 ADD IN THE ACTUAL COLUMNS AND DATA FOR BETASSO PRESERVE, MARSHALL MESA, AND APEX PARK
 
 ![cosine vectors and angle](images/Cosine_Sim.png)
 
-![cosine vectors and angle simulation](images/cosine.gif)
+![cosine vectors and angle simulation](images/cosine1.gif)
 
 These features have different ranges in their values and different units of measurement; for example a difference of three miles in length between two trails is different than a difference of three feet in ascent; therefore I scaled each feature value by subtracting it by the feature's mean and then dividing that difference by the feature's standard deviation. I did this so that the magnitude of certain features would not have too much influence on a measurement of similarity and so that differences in units would no longer matter.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.  
 
