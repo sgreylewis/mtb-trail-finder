@@ -73,7 +73,7 @@ As I mentioned in motivation, the question that most riders want to know about a
 
 ADD IN THE ACTUAL COLUMNS AND DATA FOR BETASSO PRESERVE, MARSHALL MESA, AND APEX PARK
 
-![cosine vectors and angle](images/Cosine_Sim.ggb)
+![cosine vectors and angle](images/Cosine_Sim.png)
 
 ![cosine vectors and angle simulation](images/cosine.ggb)
 
