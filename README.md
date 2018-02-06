@@ -18,44 +18,45 @@ I wrote python code that made enough requests to [MTB Project's API](https://www
 data on 26,752 trails in all 50 states and the nation's capital.  The API data came
 in JSON files, which were very easy to access, put into pandas dataframes, and concat.  
 The raw features were:
--'ascent'
--'conditionDate'
--'conditionDetails'
--'conditionStatus'
--'descent'
--'difficulty'
--'high'
--'id'
--'imgMedium'
--'imgSmall'
--'imgSmallMed'
--'imgSqSmall'
--'latitude'
--'length'
--'location'
--'longitude'
--'low'
--'name'
--'starVotes'
--'stars'
--'summary'
--'type'
--'url'  
+* 'ascent'
+* 'conditionDate'
+* 'conditionDetails'
+* 'conditionStatus'
+* 'descent'
+* 'difficulty'
+* 'high'
+* 'id'
+* 'imgMedium'
+* 'imgSmall'
+* 'imgSmallMed'
+* 'imgSqSmall'
+* 'latitude'
+* 'length'
+* 'location'
+* 'longitude'
+* 'low'
+* 'name'
+* 'starVotes'
+* 'stars'
+* 'summary'
+* 'type'
+* 'url'  
 
 ## Feature Engineering
 
 Since I want to build a content-recommender that will compare trails on their features, I dropped:
--'conditionDate'
--'conditionDetails'
--'conditionStatus'
--'high'
--'id'
--'imgMedium'
--'imgSmall'
--'imgSmallMed'
--'imgSqSmall'
--'low'
- since I didn't believe those features, even the images, are the best indicators of what makes trails similar.  I didn't end up using all the remaining features, such as 'latitude', 'longitude', 'summary', and 'url', to make my comparisons but I kept them as I would need them in my website; I also created a few new columns for 'city/town' and 'state' so that I could later search the trails by state and/or location.  I found 5,804 trails were of the type 'Connector', which is a trail that is most likely less than 1 mile long and intended as a bypass or connection between trails or trail systems; therefore I didn't think it desirable to recommend them as trails to ride on.  I also dropped the 37 trails that had missing difficulty ratings, as this would be an attribute I would use for comparison of trails.  Knowing that riders would prefer to see a set of trails with a specific range of distances, I created a length_range column that categorized each trail within a certain distance range.  In order to make the comparisons, I needed to quantify all features that I planned to use so I encoded 'difficulty', and created dummy variable columns for 'type'.  Lastly, I cleaned up columns with string values to make them more presentable for visualizations and the website.  
+* 'conditionDate'
+* 'conditionDetails'
+* 'conditionStatus'
+* 'high'
+* 'id'
+* 'imgMedium'
+* 'imgSmall'
+* 'imgSmallMed'
+* 'imgSqSmall'
+* 'low'
+
+since I didn't believe those features, even the images, are the best indicators of what makes trails similar.  I didn't end up using all the remaining features, such as 'latitude', 'longitude', 'summary', and 'url', to make my comparisons but I kept them as I would need them in my website; I also created a few new columns for 'city/town' and 'state' so that I could later search the trails by state and/or location.  I found 5,804 trails were of the type 'Connector', which is a trail that is most likely less than 1 mile long and intended as a bypass or connection between trails or trail systems; therefore I didn't think it desirable to recommend them as trails to ride on.  I also dropped the 37 trails that had missing difficulty ratings, as this would be an attribute I would use for comparison of trails.  Knowing that riders would prefer to see a set of trails with a specific range of distances, I created a length_range column that categorized each trail within a certain distance range.  In order to make the comparisons, I needed to quantify all features that I planned to use so I encoded 'difficulty', and created dummy variable columns for 'type'.  Lastly, I cleaned up columns with string values to make them more presentable for visualizations and the website.  
 
 ## Exploratory Data Analysis through Visualizations and Maps
 
@@ -94,21 +95,22 @@ This heatmap shows that the most strongly correlated quantitative columns of my 
 ### Content Based Recommender
 
 As I mentioned in motivation, the question that most riders want to know about an unknown trail is, "What trails have I ridden are like this new one?"; therefore I knew that I wanted to build a recommender that would take a trail known to a rider and return all the trails in the country ordered by their similarity to the known trail.  The rider would then have the option of filtering the set of trails by state and city/town depending on where they would like to ride.  The columns I chose to compare for similarity are:
--'ascent'
--'descent'
--'difficulty_encoded'
--'length'
--'stars'
--'type_Featured Ride'
--'type_Trail'
+* 'ascent'
+* 'descent'
+* 'difficulty_encoded'
+* 'length'
+* 'stars'
+* 'type_Featured Ride'
+* 'type_Trail'
+
 as these are the traits that are most highly correlated according to my heatmap and logically define a rider's experience and preference for a trail.  
 
 Let's take a look at three popular trails in Colorado's Front Range:
-**Name** | **Difficulty** | **Length** | **Ascent** | **Descent** | **Stars** | **Featured Ride** | **Trail**
--------- | -------------- | ---------- | ---------- | ----------- | --------- | ----------------- | ---------
-_Betasso_ | 2 | 7.4 | 829 | -829 | 3.9 | 1 | 0
-_Marshall_ | 2 | 10.3 | 960 | -961 | 3.6 | 1 | 0
-_Apex Park_ | 4 | 9.4 | 1668 | -1667 | 4.4 | 1 | 0
+Name | Difficulty | Length | Ascent | Descent | Stars | Featured Ride | Trail
+--- | --- | --- | --- | --- | --- | --- | ---
+*Betasso* | 2 | 7.4 | 829 | -829 | 3.9 | 1 | 0
+*Marshall* | 2 | 10.3 | 960 | -961 | 3.6 | 1 | 0
+*Apex Park* | 4 | 9.4 | 1668 | -1667 | 4.4 | 1 | 0
 
 ADD IN THE ACTUAL COLUMNS AND DATA FOR BETASSO PRESERVE, MARSHALL MESA, AND APEX PARK
 
