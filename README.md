@@ -3,7 +3,23 @@
 ## Motivation
 
 As a mountain biker, whether you’ve been riding for years or just starting out,
-you’re always looking for the next trail to shred.  It’s easiest to get recommendations from other riders in the parking lot of your favorite trail, but you can also ask around at local bike shops, Facebook or Meetup groups for mountain bikers, and websites such as [Trail Forks](https://www.trailforks.com) and [MTBProject](https://www.mtbproject.com).  Still, when being told that a ride unknown to you is “totally epic”, you wonder, “Will it be fast and flowy or more rocky and technical?  Are there lots of drops and if so, can I roll them?  Is it mostly climbing, descending, or an equal amount of both? Is it an out and back, loop, lollipop, or do I need a shuttle? If it’s going to be a long day in the saddle, are there bailouts just in case?”  MTBProject.com and Trailforks.com do a good job of answering these questions for you when you search for the stats of a specific trail, but wouldn’t it be nice if you could get a recommendation based on the trails you know and like?  Or if you know you want a new ride that’s a certain length, within a certain distance of where you are, and a certain level of technicality, what should you ride?  Whether you’ve ridden all the trails in your area and are looking for a new one, or are headed to Durango for a weekend and looking for some downhill shuttled rides, www.mtbtrailfinder.com has the perfect ride tailored to your desires.
+you’re always looking for the next trail to shred.  It’s easiest to get recommendations
+from other riders in the parking lot of your favorite trail, but you can also ask
+around at local bike shops, Facebook or Meetup groups for mountain bikers, and websites
+such as [Trail Forks](https://www.trailforks.com) and [MTBProject](https://www.mtbproject.com).  
+Still, when being told that a ride unknown to you is “totally epic”, you wonder,
+“Will it be fast and flowy or more rocky and technical?  Are there lots of drops
+and if so, can I roll them?  Is it mostly climbing, descending, or an equal amount
+of both? Is it an out and back, loop, lollipop, or do I need a shuttle? If it’s going
+to be a long day in the saddle, are there bailouts just in case?”  MTBProject.com
+and Trailforks.com do a good job of answering these questions for you when you search
+for the stats of a specific trail, but wouldn’t it be nice if you could get a recommendation
+based on the trails you know and like?  Or if you know you want a new ride that’s
+a certain length, within a certain distance of where you are, and a certain level
+of technicality, what should you ride?  Whether you’ve ridden all the trails in
+your area and are looking for a new one, or are headed to Durango for a weekend
+and looking for some downhill shuttled rides, www.mtbtrailfinder.com has the perfect
+ride tailored to your desires.
 
 ## Data
 
@@ -52,8 +68,16 @@ This heatmap shows that the most strongly correlated quantitative columns of my 
 
 ### Content Based Recommender
 
-As I mentioned in motivation, the question that most riders want to know about an unknown trail is, "What trails that I've ridden can I compare it to?"; therefore I knew that I wanted to build a recommender that would take a trail known to a rider and return all the trails in the country ordered by their similarity to the known trail.  The rider would then have the option of filtering the set of trails by state and city/town depending on where they would like to ride.  The columns I chose to compare for similarity are ['ascent','descent','difficulty_encoded','length','stars',
-'type_Featured Ride','type_Trail'] as these are the traits that most define a rider's experience and preference for a trail.  These features have different ranges in their values and different units of measurement; for example a difference of three miles in length between two trails is different than a difference of three feet in ascent; therefore I scaled each feature value by subtracting it by the feature's mean and then dividing that difference by the feature's standard deviation. I did this so that the magnitude of certain features would not have too much influence on a measurement of similarity and so that differences in units would no longer matter.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.  
+As I mentioned in motivation, the question that most riders want to know about an unknown trail is, "What trails have I ridden are like this new one?"; therefore I knew that I wanted to build a recommender that would take a trail known to a rider and return all the trails in the country ordered by their similarity to the known trail.  The rider would then have the option of filtering the set of trails by state and city/town depending on where they would like to ride.  The columns I chose to compare for similarity are ['ascent','descent','difficulty_encoded','length','stars',
+'type_Featured Ride','type_Trail'] as these are the traits that are most highly correlated according to my heatmap and logically define a rider's experience and preference for a trail.  
+
+ADD IN THE ACTUAL COLUMNS AND DATA FOR BETASSO PRESERVE, MARSHALL MESA, AND APEX PARK
+
+![cosine vectors and angle](images/Cosine_Sim.ggb)
+
+![cosine vectors and angle simulation](images/cosine.ggb)
+
+These features have different ranges in their values and different units of measurement; for example a difference of three miles in length between two trails is different than a difference of three feet in ascent; therefore I scaled each feature value by subtracting it by the feature's mean and then dividing that difference by the feature's standard deviation. I did this so that the magnitude of certain features would not have too much influence on a measurement of similarity and so that differences in units would no longer matter.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.  
 
 Considering each trail and it's features as a vector, I wanted to be able to measure the similarity of any one vector to all the other vectors.  Cosine Similarity and Euclidean Distance are two popular methods to measure vector similarity; I chose Cosine Similarity to measure the similarity between my vectors because it measures the angle, or direction, between the vectors without taking the magnitude of the vectors into consideration.  In essence, it measures the ratio of the trails' features, instead of how big or small those features are.  I wanted my metric to prioritize how similar trails are in terms of their ratios, instead of just how close their values are.  
 
