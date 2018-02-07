@@ -132,7 +132,7 @@ we need to prepare the data.
 These features have different ranges in their values and different units of measurement.  For example, a difference of three miles in length between two trails is different than a difference of three feet in ascent; therefore I scaled each feature value by subtracting it by the feature's mean and then dividing that difference by the feature's standard deviation. I did this so that the magnitude of certain features would not have too much influence when measuring similarity and so that differences in units would no longer matter.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.
 I put each trail's scaled features into vectors and am now ready to measure similarity.
 
-![Trail Vectors](images/trail_vectors.png =100x20)
+![Trail Vectors](images/trail_vectors.png)
 
 Considering each trail and it's features as a vector, I wanted to be able to measure the similarity of any one vector to all the other vectors.  There are many distance metrics available for measuring
 similarity; based on investigation and intuition, I chose Cosine Similarity to measure the similarity between my vectors because it measures the angle, or direction, between the vectors without taking the magnitude of the vectors into consideration.  Looking at the two dimensional space below, you can imagine
@@ -176,7 +176,7 @@ As a rider, your decision on where to ride is often based on how much time you h
 
 In class we learned how to create a python flask app with a bootstrap template;
 through this exercise, I learned the basics, but for my website, I am forever indebted
-to @kfarbman who allowed me to use her [Ski Run Recommender](https://www.skirunrecommender.com)
+to Karen Farbman(@kfarbman) who allowed me to use her [Ski Run Recommender](https://www.skirunrecommender.com)
 flask app, along with its html, as a template for my flask app.  After creating
 the flask app, putting it on AWS as an instance with a load balancer, and buying
 a domain name, I was excited to send [mtbtrailfinder](https://www.mtbtrailfinder.com)
@@ -236,8 +236,24 @@ for something new.
 
 ## Tech Stack <a name="techstack"></a>
 
+The main python libraries and technologies I used are pictured below:
 
+![Tech Stack](images/techstack.png)
 
 ## Future Direction <a name="futuredirection"></a>
 
+I have ridden over 50 trails in the state of Colorado and at least 10 trails in
+the state of Utah; while I believe that my exhaustive comparisons of all the green,
+blue, and black trails I've ridden are remarkably accurate, I need more user input
+for the other 48 states I haven't ridden in.  If I find that my users don't agree
+on the similarity that my website recommends, I can change the similarity metric
+or change the features that I use to measure similarity.  For the website, I would
+like to add a map that shows where the recommendations are in relation to your location
+on a map.
+
 ## References <a name="references"></a>
+
+Again, I would like to thank Karen Farbman, whose [Ski Run Recommender repo](https://github.com/kfarbman/ski-recommender) that she made for her Galvanize
+Data Science Immersive Capstone Project, inspired me to realize that I could improve
+riders' enjoyment of mountain biking by providing access to recommendations based
+on trails they already know and like.  
