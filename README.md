@@ -1,6 +1,17 @@
 # www.mtbtrailfinder.com: A Mountain Bike Trail Finder
 
-## Motivation
+# Table of contents
+1. [Motivation](#motivation)
+2. [Data](#data)
+3. [Feature Engineering](#feature_engineering)
+4. [Exploratory Data Analysis](#EDA)
+5. [Recommender Methods](#methods)
+6. [Website](#website)
+7. [Tech Stack](#techstack)
+8. [Future Direction](#futuredirection)
+8. [References](#references)
+
+## Motivation <a name="motivation"></a>
 
 As a mountain biker, whether you’ve been riding for years or just starting out,
 you’re always looking for the next trail to shred.  It’s easiest to get recommendations from other riders in the parking lot of your favorite trail, but you can also ask around at local bike shops, Facebook or Meetup groups for mountain bikers, and websites such as [MTBProject](https://www.mtbproject.com).  
@@ -12,7 +23,7 @@ for the stats of a specific trail,
 ![Lair O' the Bear](images/LairOtheBear.png)
 such as Lair O' the Bear, but wouldn’t it be nice if you could get a recommendation based on the trails you know and like?  Or if you know you want a new ride that’s a certain length, within a certain distance of where you are, and a certain level of technicality, what should you ride?  Whether you’ve ridden all the trails in your area and are looking for a new one, or are headed to Durango for a weekend and looking for some downhill shuttled rides, www.mtbtrailfinder.com has the perfect ride tailored to your desires.
 
-## Data
+## Data <a name="data"></a>
 
 I wrote python code that made enough requests to [MTB Project's API](https://www.mtbproject.com//data) to get
 data on 26,752 trails in all 50 states and the nation's capital.  The API data came
@@ -41,7 +52,7 @@ in JSON files, which were very easy to access, put into pandas dataframes, and c
 * 'type'
 * 'url'  
 
-## Feature Engineering
+## Feature Engineering <a name="feature_engineering"></a>
 
 Since I want to build a content-recommender that will compare trails on their features, I dropped:
 * 'conditionDate'
@@ -57,7 +68,7 @@ Since I want to build a content-recommender that will compare trails on their fe
 
 since I didn't believe those features, even the images, are the best indicators of what makes trails similar.  I didn't end up using all the remaining features, such as 'latitude', 'longitude', 'summary', and 'url', to make my comparisons but I kept them as I would need them in my website; I also created a few new columns for 'city/town' and 'state' so that I could later search the trails by state and/or location.  I found 5,804 trails were of the type 'Connector', which is a trail that is most likely less than 1 mile long and intended as a bypass or connection between trails or trail systems; therefore I didn't think it desirable to recommend them as trails to ride on.  I also dropped the 37 trails that had missing difficulty ratings, as this would be an attribute I would use for comparison of trails.  Knowing that riders would prefer to see a set of trails with a specific range of distances, I created a length_range column that categorized each trail within a certain distance range.  In order to make the comparisons, I needed to quantify all features that I planned to use so I encoded 'difficulty', and created dummy variable columns for 'type'.  Lastly, I cleaned up columns with string values to make them more presentable for visualizations and the website.  
 
-## Exploratory Data Analysis through Visualizations and Maps
+## Exploratory Data Analysis through Visualizations and Maps <a name="EDA"></a>
 
 Populating all the trails by their lat/lon and coloring them by their difficulty level, you can see that while there are trails all over the country, the midwest seems pretty sparse.  The data is submitted by riders; therefore the app may not be as popular in the midwest and/or mountain biking is not as popular.
 
@@ -89,7 +100,7 @@ This heatmap shows that the most strongly correlated quantitative columns of my 
 ![Heatmap of quantitative columns](images/Heatmap_quantitative_columns.png)
 
 
-## Methods
+## Methods <a name="methods"></a>
 
 ### Content Based Recommender
 
@@ -121,7 +132,7 @@ we need to prepare the data.
 These features have different ranges in their values and different units of measurement.  For example, a difference of three miles in length between two trails is different than a difference of three feet in ascent; therefore I scaled each feature value by subtracting it by the feature's mean and then dividing that difference by the feature's standard deviation. I did this so that the magnitude of certain features would not have too much influence when measuring similarity and so that differences in units would no longer matter.  I chose not to include latitude and longitude in my features used for comparison since both of my recommenders will have an option to filter based on state and city/town or radius from a current location.
 I put each trail's scaled features into vectors and am now ready to measure similarity.
 
-![Trail Vectors](images/trail_vectors.png)
+![Trail Vectors](images/trail_vectors.png =100x20)
 
 Considering each trail and it's features as a vector, I wanted to be able to measure the similarity of any one vector to all the other vectors.  There are many distance metrics available for measuring
 similarity; based on investigation and intuition, I chose Cosine Similarity to measure the similarity between my vectors because it measures the angle, or direction, between the vectors without taking the magnitude of the vectors into consideration.  Looking at the two dimensional space below, you can imagine
@@ -161,8 +172,72 @@ of -.41, meaning that the trails are not similar.
 
 As a rider, your decision on where to ride is often based on how much time you have.  The time you have depends on the time it takes to get your bike ready, put all your gear on, drive to the trail, ride, drive home, and then unpack your bike and gear.  Most riders are looking to ride 1 - 3 hours, with driving distance to the trailhead often being the biggest deciding factor in where to ride.  Since distance between two locations is easy to calculate using Python's GeoPy library, I decided to create a recommender to suggest trails based off their driving distance from the user's current location.  I started simply by creating a function that would take in an address and a maximum desired distance to drive from that location; it turns the address into a lat/lon location using Google's API, and then converts the maximum desired distance into a longitude difference and a latitude difference(miles per degree in latitude changes with longitude so I had to make sure my function accounted for this).  I then used those differences to get latitude and longitude ranges and I returned to the user all trails whose latitude and longitude were within that range.  I made it possible for the user to filter the returned recommendations based on distance length ranges(0-5, 5-10, 10-15, 15-20, 20-25, 25-30, or 30+), and the difficulty level(green, blue, or black trails).  I'm extremely satisfied with the results as it returns rides I've never ridden and never knew were so close to me.  
 
-## Website
+## Website <a name="website"></a>
 
-## Future Direction
+In class we learned how to create a python flask app with a bootstrap template;
+through this exercise, I learned the basics, but for my website, I am forever indebted
+to @kfarbman who allowed me to use her [Ski Run Recommender](https://www.skirunrecommender.com)
+flask app, along with its html, as a template for my flask app.  After creating
+the flask app, putting it on AWS as an instance with a load balancer, and buying
+a domain name, I was excited to send [mtbtrailfinder](https://www.mtbtrailfinder.com)
+out into the world!  
 
-## Tech Stack
+![MTB Trail Finder Homepage](images/mtbtrailfinder_homepage.png)
+
+From the homepage, you can decide whether you'd like recommendations based off of
+trails you like or your location.  I personally love the Apex Park Tour featured
+ride in Golden, CO, but next month I'm headed to Moab, Utah for three nights of
+camping and mountain biking; if I like the Apex Park Tour ride in Colorado, what
+should I ride in Moab?  Mtbtrailfinder.com can tell me!  From the homepage, I'll
+click on 'Recommendations Based on Trails You Like' and then easily pick Colorado,
+Apex Park Tour, and then Utah and specifically Moab, since that's where I'll be
+riding.  I've made the state and city/town of where a user is riding as optional
+since they may just want to be finding what trails around the country are most
+similar to their favorite trail.  Since there are over 2,000 trails in some states,
+it's easiest to start typing the name of the trail, which will then take you to
+the trails that start with the letters you've typed, instead of having to scroll
+through all the trails.  Let's see what recommendations my search received!
+
+![MTB Trail Finder Trail Recommendations Page Apex](images/mtbtrailfinder_recommendations_page_apex.png)
+
+You can see the trail most similar to Apex Park Tour in Moab is 'Amasa Back/Cliffhanger',
+which is described as "one of Moab's classic rides, featuring steep drops, big exposure,
+great views, and a rugged climb."  Sounds totally epic!  The problem is I have a
+friend coming on the trip who prefers trails like Betasso Preserve; she'd be very
+upset if I dragged her along with me on Amasa Back.  No worries; I'll just go back
+to the recommendations page and search for recommendations in Moab that are similar
+to Betasso Preserve!  You'll see that each trail recommended has a hyperlink in
+it's name which takes you to MTBProject's full description for that trail; MTBProject's
+page will also have a direct link to Google Maps which will give you driving directions
+to the trail from your current location, making it easy for me to drop my friend
+off at her recommended trail while I head on to Amasa Back!
+
+![MTB Trail Finder Trail Recommendations for Apex](images/mtbtrailfinder_recommendations_apex_moab.png)
+
+Now if you're a beginner and have never ridden any trails, or are looking for a
+new trail that's within a certain driving distance of your location, check out the
+'Recommendations Based on Location' page!  You can input your location, whether
+that be an address or just a city and state, and then the maximum distance you'd
+like to drive to the trailhead.  The distance is turned into a radius from your
+location so remember that your actual driving distance might be longer than the
+distance you input, but not by too much.  You can optionally choose the range of
+length you'd like the recommended trails to be and if you'd prefer a certain level
+of difficulty.  
+
+![MTB Trail Finder Location Recommendations Page](images/mtbtrailfinder_locations.png)
+
+Up to twenty trails will be recommended to you, with the trails ascending by the
+shortest distance from your location.  These types of recommendations are especially
+wonderful for riders who are either just starting out and want to get a lay of the
+land, or for riders who think they've ridden everything in their area and are looking
+for something new.
+
+![MTB Trail Finder Location Recommendations for Galvanize](images/mtbtrailfinder_miles_away.png)
+
+## Tech Stack <a name="techstack"></a>
+
+
+
+## Future Direction <a name="futuredirection"></a>
+
+## References <a name="references"></a>
